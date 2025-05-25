@@ -1,0 +1,24 @@
+@page
+@model Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container d-flex justify-content-center align-items-center flex-column" style="min-height: 80vh;">
+    <h2 class="mb-4 text-primary">Admin Panel</h2>
+
+    <ul class="list-unstyled text-center">
+        <li class="mb-2">
+            <a class="btn btn-outline-primary w-100" style="max-width: 300px;" asp-page="/Admin/TermManager/Index">📘 Manage Term</a>
+        </li>
+        <li class="mb-2">
+            <a class="btn btn-outline-primary w-100" style="max-width: 300px;" asp-page="/Admin/InstructorManager/Index">👨‍🏫 Instructor Account Manager</a>
+        </li>
+        <li class="mb-2">
+            <a class="btn btn-outline-primary w-100" style="max-width: 300px;" asp-page="/Admin/ReservationCalendar/Index">📅 Reservation Calendar</a>
+        </li>
+        <li class="mb-2">
+            <a class="btn btn-outline-primary w-100" style="max-width: 300px;" asp-page="/Admin/ClassroomManager/Index">🏫 Classroom List</a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,45 @@
+@page
+@model CengReservation.Pages.Instructor.ReservationHistory.IndexModel
+@{
+    ViewData["Title"] = "My Reservation History";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">📜 My Reservation History</h2>
+
+    @if (Model.Reservations.Any())
+    {
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Classroom</th>
+                    <th>Date</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reservation in Model.Reservations)
+                {
+                    var reservationDate = Model.GetClosestDate(reservation.Term.StartDate, reservation.DayOfWeek);
+                    <tr class="text-center">
+                        <td>@reservation.Classroom.Name</td>
+                        <td>@reservationDate.ToString("yyyy-MM-dd")</td>
+                        <td>@reservation.StartTime.ToString(@"hh\:mm")</td>
+                        <td>@reservation.EndTime.ToString(@"hh\:mm")</td>
+                        <td>
+                            <span class="badge bg-@(reservation.Status == "Approved" ? "success" : reservation.Status == "Rejected" ? "danger" : "warning")">
+                                @reservation.Status
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No reservations found.</div>
+    }
+</div>

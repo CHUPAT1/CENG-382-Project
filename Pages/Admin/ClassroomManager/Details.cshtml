@@ -1,0 +1,54 @@
+@page
+@model CengReservation.Pages.Admin.ClassroomManager.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">Classroom Details</h2>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.Classroom.Name</dd>
+
+        <dt class="col-sm-2">Capacity</dt>
+        <dd class="col-sm-10">@Model.Classroom.Capacity</dd>
+    </dl>
+
+    <a class="btn btn-outline-primary btn-sm" asp-page="./Edit" asp-route-id="@Model.Classroom.Id">Edit</a>
+    <a class="btn btn-secondary btn-sm" asp-page="./Index">Back to List</a>
+
+    <hr />
+
+    <h4 class="text-success mt-4">Feedbacks</h4>
+
+    @if (Model.Feedbacks.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Submitted At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var feedback in Model.Feedbacks)
+                {
+                    <tr>
+                        <td>@feedback.User.Email</td>
+                        <td>@feedback.Rating</td>
+                        <td>@feedback.Comment</td>
+                        <td>@feedback.SubmittedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">No feedbacks for this classroom yet.</p>
+    }
+</div>

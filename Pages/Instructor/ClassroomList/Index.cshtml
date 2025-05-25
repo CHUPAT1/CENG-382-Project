@@ -1,0 +1,76 @@
+@page
+@model CengReservation.Pages.Instructor.ClassroomList.IndexModel
+@{
+    ViewData["Title"] = "Classroom Manager";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">🏫 Classroom List</h2>
+
+    <table class="table table-hover table-bordered shadow-sm">
+        <thead class="table-light">
+            <tr class="text-center">
+                <th>Name</th>
+                <th>Capacity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var classroom in Model.Classrooms)
+            {
+                <tr class="align-middle text-center">
+                    <td>@classroom.Name</td>
+                    <td>@classroom.Capacity</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#feedbackModal"
+                                data-classroom-id="@classroom.Id">
+                            ✍️ Give Feedback
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg">
+            <form method="post" asp-page-handler="SendFeedback">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="feedbackModalLabel">📣 Feedback Form</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="ClassroomId" name="ClassroomId" />
+                    <div class="mb-3">
+                        <label for="Comment" class="form-label">Comment</label>
+                        <textarea class="form-control" id="Comment" name="Comment" rows="3" required placeholder="Enter your thoughts..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Rating" class="form-label">Rating (1-5)</label>
+                        <input type="number" class="form-control" id="Rating" name="Rating" min="1" max="5" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var feedbackModal = document.getElementById('feedbackModal');
+        feedbackModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var classroomId = button.getAttribute('data-classroom-id');
+            feedbackModal.querySelector('#ClassroomId').value = classroomId;
+        });
+    </script>
+}

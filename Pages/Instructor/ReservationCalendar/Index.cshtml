@@ -1,0 +1,106 @@
+@page
+@model CengReservation.Pages.Instructor.ReservationCalendar.IndexModel
+@{
+    ViewData["Title"] = "Reservation Calendar";
+}
+
+<div class="main-content-area">
+    <h2 class="text-center mb-4 text-primary">Reservation Calendar</h2>
+    <div id="calendar" style="min-height: 600px;"></div>
+
+    <div class="modal fade" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post" asp-page-handler="Create" class="modal-content" id="reservationForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reservationModalLabel">New Reservation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="ReservationDate" name="ReservationInput.ReservationDate" />
+
+                    <div class="mb-3">
+                        <label for="StartTime" class="form-label">Start Time</label>
+                        <input type="time" id="StartTime" name="ReservationInput.StartTime" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="EndTime" class="form-label">End Time</label>
+                        <input type="time" id="EndTime" name="ReservationInput.EndTime" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ClassroomId" class="form-label">Classroom</label>
+                        <select name="ReservationInput.ClassroomId" id="ClassroomId" class="form-select" required>
+                            @foreach (var room in Model.ClassroomList)
+                            {
+                                <option value="@room.Id">@room.Name (@room.Capacity)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const holidayDates = [];
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                dateClick: function (info) {
+                    const clickedDate = info.dateStr;
+
+                    if (holidayDates.includes(clickedDate)) {
+                        alert("This is a public holiday. You cannot make a reservation.");
+                        return;
+                    }
+
+                    document.getElementById("ReservationDate").value = clickedDate;
+                    document.getElementById("StartTime").value = "08:00";
+                    document.getElementById("EndTime").value = "10:00";
+                    new bootstrap.Modal(document.getElementById('reservationModal')).show();
+                },
+                events: {
+                    url: '/Instructor/ReservationCalendar?handler=Reservations',
+                    failure: () => alert("Failed to load reservations.")
+                }
+            });
+
+            fetch(`https://date.nager.at/api/v3/PublicHolidays/${new Date().getFullYear()}/TR`)
+                .then(res => res.json())
+                .then(data => {
+                    const holidayEvents = data.map(h => {
+                        holidayDates.push(h.date);
+                        return {
+                            title: h.localName,
+                            start: h.date,
+                            allDay: true,
+                            display: 'background',
+                            color: '#ffcccc'
+                        };
+                    });
+                    calendar.addEventSource(holidayEvents);
+                });
+
+            calendar.render();
+        });
+    </script>
+}

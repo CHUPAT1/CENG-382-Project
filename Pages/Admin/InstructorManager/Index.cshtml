@@ -1,0 +1,87 @@
+@page
+@model CengReservation.Pages.Admin.InstructorManager.IndexModel
+@{
+    ViewData["Title"] = "Instructor Account Manager";
+}
+
+<div class="container">
+    <h2 class="text-primary mb-4 d-flex align-items-center gap-2">
+        <i class="bi bi-person-plus-fill"></i> Instructor Account Manager
+    </h2>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-success text-white fw-semibold">
+            Create New Instructor
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="NewInstructor.Email" class="form-label"></label>
+                    <input asp-for="NewInstructor.Email" class="form-control" />
+                    <span asp-validation-for="NewInstructor.Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="NewInstructor.Password" class="form-label"></label>
+                    <input asp-for="NewInstructor.Password" type="password" class="form-control" />
+                    <span asp-validation-for="NewInstructor.Password" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-person-plus"></i> Create Instructor
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Instructors.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered shadow-sm align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var instructor in Model.Instructors)
+                {
+                    <tr>
+                        <td>@instructor.Email</td>
+                        <td>@instructor.UserName</td>
+                        <td>
+                            @if (instructor.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (instructor.IsActive)
+                            {
+                                <form method="post" asp-page-handler="Deactivate" asp-route-id="@instructor.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-person-dash"></i> Deactivate
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No instructors found.</div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
